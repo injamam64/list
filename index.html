@@ -3,326 +3,357 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>B&W Shopping List</title>
+    <title>Market Tracker Pro</title>
     
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-<style>
-    /* --- MODERN COLORFUL CSS THEME --- */
-    :root {
-        --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
-        --card-bg: #ffffff;
-        --text-main: #2d3748;
-        --text-muted: #718096;
-        --primary: #4f46e5; /* Deep Indigo */
-        --primary-hover: #4338ca;
-        --accent-success: #10b981; /* Mint Green */
-        --accent-success-light: #e6f4ea;
-        --accent-danger: #ef4444; /* Coral Red */
-        --accent-danger-light: #fde8e8;
-        
-        /* Category Badges */
-        --bg-tiffin: #eff6ff;
-        --text-tiffin: #1e40af;
-        --bg-lunch: #fef3c7;
-        --text-lunch: #92400e;
-        --bg-tea: #f3e8ff;
-        --text-tea: #6b21a8;
 
-        --radius-lg: 16px;
-        --radius-md: 12px;
-        --radius-sm: 8px;
-        --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.02);
-        --shadow-md: 0 10px 25px -5px rgba(79, 70, 229, 0.1), 0 8px 10px -6px rgba(79, 70, 229, 0.05);
-        --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+    <style>
+        /* --- MODERN COLORFUL CSS THEME --- */
+        :root {
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            --card-bg: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --accent-success: #10b981;
+            --accent-success-light: #e6f4ea;
+            --accent-danger: #ef4444;
+            --accent-danger-light: #fde8e8;
+            --accent-price: #059669;
+            
+            --bg-tiffin: #3b82f6;
+            --bg-lunch: #f59e0b;
+            --bg-tea: #a855f7;
 
-    body {
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        background: var(--bg-gradient);
-        color: var(--text-main);
-        margin: 0;
-        padding: 60px 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        min-height: 100vh;
-        -webkit-font-smoothing: antialiased;
-    }
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 10px 25px -5px rgba(79, 70, 229, 0.1);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-    .container {
-        width: 100%;
-        max-width: 540px;
-        background: var(--card-bg);
-        border-radius: var(--radius-lg);
-        padding: 35px;
-        box-shadow: var(--shadow-md);
-        box-sizing: border-box;
-    }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px 100px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
 
-    /* Header styling */
-    header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 30px;
-    }
+        .container {
+            width: 100%;
+            max-width: 540px;
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 35px;
+            box-shadow: var(--shadow-md);
+            box-sizing: border-box;
+        }
 
-    h1 {
-        font-size: 1.6rem;
-        font-weight: 800;
-        letter-spacing: -0.5px;
-        background: linear-gradient(120deg, #4f46e5, #7c3aed);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin: 0;
-    }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
 
-    /* Category Titles */
-    h3.category-title {
-        font-size: 0.9rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        color: var(--text-muted);
-        margin: 0 0 15px 0;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(120deg, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
 
-    h3.category-title::after {
-        content: '';
-        flex: 1;
-        height: 1px;
-        background: #e2e8f0;
-    }
+        h3.category-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin: 0 0 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-    /* Dynamic Category Accents dynamically targeted via JS context or standard layout */
-    #list-Tiffin ~ h3.category-title { color: var(--text-tiffin); }
+        h3.category-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
+        }
 
-    /* Admin Feature Style */
-    .admin-btn {
-        background: #f1f5f9;
-        color: var(--text-main);
-        border: none;
-        padding: 10px 18px;
-        border-radius: var(--radius-sm);
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 0.85rem;
-        transition: var(--transition);
-    }
+        .admin-btn {
+            background: #f1f5f9;
+            color: var(--text-main);
+            border: none;
+            padding: 10px 18px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
 
-    .admin-btn:hover {
-        background: #e2e8f0;
-        transform: translateY(-1px);
-    }
+        .admin-btn:hover {
+            background: #e2e8f0;
+            transform: translateY(-1px);
+        }
 
-    .admin-active #toggle-admin {
-        background: var(--text-main);
-        color: #ffffff;
-    }
+        .admin-active #toggle-admin {
+            background: var(--text-main);
+            color: #ffffff;
+        }
 
-    #admin-panel {
-        display: none;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: var(--radius-md);
-        padding: 20px;
-        margin-bottom: 30px;
-        animation: slideDown 0.3s ease;
-    }
+        #admin-panel {
+            display: none;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
 
-    #admin-panel h3 {
-        font-size: 0.95rem;
-        color: var(--text-main);
-        margin-bottom: 15px;
-    }
+        .form-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
 
-    .form-group {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
+        input, select {
+            padding: 12px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: var(--radius-sm);
+            background: #ffffff;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            flex: 1;
+            min-width: 130px;
+            transition: var(--transition);
+        }
 
-    input, select {
-        padding: 12px 14px;
-        border: 1px solid #cbd5e1;
-        border-radius: var(--radius-sm);
-        background: #ffffff;
-        color: var(--text-main);
-        font-size: 0.9rem;
-        font-family: inherit;
-        outline: none;
-        flex: 1;
-        min-width: 140px;
-        transition: var(--transition);
-    }
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
 
-    input:focus, select:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
-    }
+        #add-item-btn {
+            background: var(--primary);
+            color: #ffffff;
+            flex: none;
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
 
-    #add-item-btn {
-        background: var(--primary);
-        color: #ffffff;
-        flex: none;
-        padding: 12px 24px;
-        border-radius: var(--radius-sm);
-        border: none;
-        font-weight: 600;
-        cursor: pointer;
-        transition: var(--transition);
-    }
+        #add-item-btn:hover {
+            background: var(--primary-hover);
+        }
 
-    #add-item-btn:hover {
-        background: var(--primary-hover);
-        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-    }
+        .category-section {
+            margin-bottom: 30px;
+        }
 
-    /* List Layout */
-    .category-section {
-        margin-bottom: 30px;
-    }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
 
-    ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: #ffffff;
+            border: 1px solid #f1f5f9;
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
 
-    li {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 16px 20px;
-        background: #ffffff;
-        border: 1px solid #f1f5f9;
-        border-radius: var(--radius-md);
-        margin-bottom: 12px;
-        box-shadow: var(--shadow-sm);
-        transition: var(--transition);
-    }
+        li:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
 
-    li:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-hover);
-        border-color: #e2e8f0;
-    }
+        .item-info {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            flex: 1;
+        }
 
-    .item-info {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--text-main);
-    }
+        .item-quantity {
+            font-weight: 500;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            background: #f1f5f9;
+            padding: 3px 8px;
+            border-radius: 20px;
+        }
 
-    .item-quantity {
-        font-weight: 500;
-        color: var(--text-muted);
-        margin-left: 8px;
-        font-size: 0.85rem;
-        background: #f1f5f9;
-        padding: 3px 8px;
-        border-radius: 20px;
-    }
+        /* Price display tags */
+        .price-display {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent-price);
+            background: #d1fae5;
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+        }
 
-    /* Dynamic styling per category layout rules */
-    #list-Tiffin li { border-left: 4px solid #3b82f6; }
-    #list-Lunch li { border-left: 4px solid #f59e0b; }
-    #list-Tea li { border-left: 4px solid #a855f7; }
+        .admin-active .price-display {
+            display: none; /* Hide static price when admin edits */
+        }
 
-    .action-btns {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-    }
+        /* Inline Price Input for Admin Mode */
+        .price-input-inline {
+            display: none;
+            width: 70px;
+            padding: 4px 8px;
+            border: 1px solid var(--accent-price);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent-price);
+            background: #fff;
+        }
 
-    /* Dynamic Styled Interactive Buttons */
-    .btn-check, .btn-delete {
-        border: none;
-        cursor: pointer;
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1rem;
-        transition: var(--transition);
-    }
+        .admin-active .price-input-inline {
+            display: inline-block; /* Show input box only in admin mode */
+        }
 
-    .btn-check {
-        background: var(--accent-success-light);
-        color: var(--accent-success);
-    }
+        #list-Tiffin li { border-left: 4px solid var(--bg-tiffin); }
+        #list-Lunch li { border-left: 4px solid var(--bg-lunch); }
+        #list-Tea li { border-left: 4px solid var(--bg-tea); }
 
-    .btn-check:hover {
-        background: var(--accent-success);
-        color: #ffffff;
-        transform: scale(1.08);
-    }
+        .action-btns {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-left: 12px;
+        }
 
-    .btn-delete {
-        display: none;
-        background: var(--accent-danger-light);
-        color: var(--accent-danger);
-    }
+        .btn-check, .btn-delete {
+            border: none;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
 
-    .btn-delete:hover {
-        background: var(--accent-danger);
-        color: #ffffff;
-        transform: scale(1.08);
-    }
+        .btn-check {
+            background: var(--accent-success-light);
+            color: var(--accent-success);
+        }
 
-    .admin-active .btn-delete {
-        display: flex;
-    }
+        .btn-check:hover {
+            background: var(--accent-success);
+            color: #ffffff;
+            transform: scale(1.08);
+        }
 
-    /* Purchased Lower Section styling */
-    #purchased-section {
-        margin-top: 45px;
-        padding-top: 25px;
-        border-top: 2px dashed #e2e8f0;
-    }
+        .btn-delete {
+            display: none;
+            background: var(--accent-danger-light);
+            color: var(--accent-danger);
+        }
 
-    #purchased-list li {
-        background: #f8fafc;
-        border-left: 4px solid #cbd5e1;
-        box-shadow: none;
-        opacity: 0.7;
-    }
+        .btn-delete:hover {
+            background: var(--accent-danger);
+            color: #ffffff;
+            transform: scale(1.08);
+        }
 
-    #purchased-list li:hover {
-        transform: none;
-        box-shadow: none;
-    }
+        .admin-active .btn-delete {
+            display: flex;
+        }
 
-    #purchased-list li .item-info {
-        text-decoration: line-through;
-        color: var(--text-muted);
-        font-weight: 400;
-    }
+        #purchased-section {
+            margin-top: 45px;
+            padding-top: 25px;
+            border-top: 2px dashed #e2e8f0;
+        }
 
-    #purchased-list li .item-quantity {
-        background: #e2e8f0;
-        color: var(--text-muted);
-    }
+        #purchased-list li {
+            background: #f8fafc;
+            border-left: 4px solid #cbd5e1;
+            box-shadow: none;
+        }
 
-    /* Smooth CSS Animations */
-    @keyframes slideDown {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-</style>
+        #purchased-list li .item-name-text {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        /* Bottom Sticky Total Bar Layout */
+        .total-sticky-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 540px;
+            background: #1e293b;
+            color: #ffffff;
+            padding: 18px 30px;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            z-index: 100;
+        }
+
+        .total-label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+        }
+
+        .total-amount {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #34d399;
+        }
+    </style>
 </head>
 <body>
 
     <div class="container" id="main-container">
         <header>
-            <h1>Market List</h1>
+            <h1>Market Tracker</h1>
             <button class="admin-btn" id="toggle-admin">Admin Mode</button>
         </header>
 
@@ -330,13 +361,13 @@
             <h3>Add New Item</h3>
             <div class="form-group">
                 <input type="text" id="item-name" placeholder="Item Name" required>
-                <input type="text" id="item-qty" placeholder="Qty (e.g., 2kg, 1 packet)" required>
+                <input type="text" id="item-qty" placeholder="Qty (e.g., 1kg)" required>
                 <select id="item-category">
                     <option value="Tiffin">Tiffin</option>
                     <option value="Lunch">Lunch</option>
                     <option value="Tea">Tea</option>
                 </select>
-                <button class="admin-btn" id="add-item-btn" style="flex: none;">Add</button>
+                <button id="add-item-btn">Add</button>
             </div>
         </div>
 
@@ -363,10 +394,15 @@
         </div>
     </div>
 
+    <div class="total-sticky-bar">
+        <div class="total-label">Total Amount Paid</div>
+        <div class="total-amount" id="grand-total">₹0.00</div>
+    </div>
+
     <script>
-        // TODO: Replace with your actual Firebase project configuration
+        // Paste your configuration here
         const firebaseConfig = {
-         apiKey: "AIzaSyCS_dt1nt3t5_KpWtOsQ872fDA2OroBuyk",
+            apiKey: "AIzaSyCS_dt1nt3t5_KpWtOsQ872fDA2OroBuyk",
   authDomain: "item-list-9b262.firebaseapp.com",
   databaseURL: "https://item-list-9b262-default-rtdb.firebaseio.com",
   projectId: "item-list-9b262",
@@ -376,12 +412,10 @@
   measurementId: "G-ZWNEQW54M2"
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const itemsCollection = db.collection('marketItems');
 
-        // DOM Elements
         const toggleAdminBtn = document.getElementById('toggle-admin');
         const adminPanel = document.getElementById('admin-panel');
         const mainContainer = document.getElementById('main-container');
@@ -391,8 +425,9 @@
         const listLunch = document.getElementById('list-Lunch');
         const listTea = document.getElementById('list-Tea');
         const purchasedList = document.getElementById('purchased-list');
+        const grandTotalDisplay = document.getElementById('grand-total');
 
-        // Toggle Admin Mode
+        // Toggle Admin panel view layout rules
         toggleAdminBtn.addEventListener('click', () => {
             if (adminPanel.style.display === 'none' || adminPanel.style.display === '') {
                 adminPanel.style.display = 'block';
@@ -405,14 +440,14 @@
             }
         });
 
-        // Add Item to Firestore
+        // Add element
         addItemBtn.addEventListener('click', () => {
             const name = document.getElementById('item-name').value.trim();
             const qty = document.getElementById('item-qty').value.trim();
             const category = document.getElementById('item-category').value;
 
             if (name === '' || qty === '') {
-                alert('Please fill out both Name and Quantity');
+                alert('Please enter Name and Quantity');
                 return;
             }
 
@@ -421,72 +456,117 @@
                 quantity: qty,
                 category: category,
                 purchased: false,
+                price: 0, 
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             })
             .then(() => {
-                // Clear inputs
                 document.getElementById('item-name').value = '';
                 document.getElementById('item-qty').value = '';
-            })
-            .catch(error => console.error("Error adding document: ", error));
+            });
         });
 
-        // Toggle Purchased Status in Firestore
-        function togglePurchased(id, currentStatus) {
+        // Instant Move To Purchased (No Popups!)
+        function moveToPurchased(id) {
             itemsCollection.doc(id).update({
-                purchased: !currentStatus
+                purchased: true
             });
         }
 
-        // Delete Item from Firestore (Admin feature)
+        // Inline Price Database Save Event
+        function saveInlinePrice(id, newPriceValue) {
+            const parsingPrice = parseFloat(newPriceValue);
+            const verifiedPrice = isNaN(parsingPrice) || parsingPrice < 0 ? 0 : parsingPrice;
+            
+            itemsCollection.doc(id).update({
+                price: verifiedPrice
+            });
+        }
+
         function deleteItem(id) {
-            if(confirm("Are you sure you want to remove this item permanently?")) {
+            if(confirm("Delete this item permanently?")) {
                 itemsCollection.doc(id).delete();
             }
         }
 
-        // Real-time Database Listener to render lists
+        // Real-time Database Snapshot Render Processing
         itemsCollection.orderBy('timestamp', 'desc').onSnapshot(snapshot => {
-            // Clear existing UI lists
             listTiffin.innerHTML = '';
             listLunch.innerHTML = '';
             listTea.innerHTML = '';
             purchasedList.innerHTML = '';
+            
+            let accumulatedTotalSum = 0;
 
             snapshot.forEach(doc => {
                 const item = doc.data();
                 const id = doc.id;
+                const itemPrice = item.price || 0;
 
-                // Create Item Element
                 const li = document.createElement('li');
                 
+                // Item Info Container
                 const infoDiv = document.createElement('div');
                 infoDiv.className = 'item-info';
-                infoDiv.innerHTML = `${item.name} <span class="item-quantity">(${item.quantity})</span>`;
+                
+                if (item.purchased) {
+                    accumulatedTotalSum += itemPrice;
+
+                    // Text Info
+                    const textSpan = document.createElement('span');
+                    textSpan.className = 'item-name-text';
+                    textSpan.textContent = item.name;
+
+                    const qtySpan = document.createElement('span');
+                    qtySpan.className = 'item-quantity';
+                    qtySpan.textContent = item.quantity;
+
+                    // Static Price Display (for normal mode)
+                    const staticPriceSpan = document.createElement('span');
+                    staticPriceSpan.className = 'price-display';
+                    staticPriceSpan.textContent = `₹${itemPrice.toFixed(2)}`;
+
+                    // Editable Input Field (for Admin Mode)
+                    const priceInput = document.createElement('input');
+                    priceInput.type = 'number';
+                    priceInput.className = 'price-input-inline';
+                    priceInput.value = itemPrice === 0 ? '' : itemPrice;
+                    priceInput.placeholder = '₹0.00';
+                    priceInput.step = '0.01';
+                    
+                    // Save when admin clicks away or presses Enter
+                    priceInput.onblur = () => saveInlinePrice(id, priceInput.value);
+                    priceInput.onkeydown = (e) => { if(e.key === 'Enter') priceInput.blur(); };
+
+                    infoDiv.appendChild(textSpan);
+                    infoDiv.appendChild(qtySpan);
+                    infoDiv.appendChild(staticPriceSpan);
+                    infoDiv.appendChild(priceInput);
+                } else {
+                    infoDiv.innerHTML = `<span>${item.name}</span> <span class="item-quantity">${item.quantity}</span>`;
+                }
                 li.appendChild(infoDiv);
 
+                // Action Controls Container
                 const actionDiv = document.createElement('div');
                 actionDiv.className = 'action-btns';
 
-                // Admin Delete Button
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'btn-delete';
-                deleteBtn.innerHTML = 'X';
+                deleteBtn.innerHTML = '✕';
                 deleteBtn.onclick = () => deleteItem(id);
                 actionDiv.appendChild(deleteBtn);
 
-                // Right Move/Check Button 
                 if (!item.purchased) {
                     const checkBtn = document.createElement('button');
                     checkBtn.className = 'btn-check';
-                    checkBtn.innerHTML = '✓'; // Right symbol
-                    checkBtn.onclick = () => togglePurchased(id, item.purchased);
+                    checkBtn.innerHTML = '✓';
+                    checkBtn.onclick = () => moveToPurchased(id);
                     actionDiv.appendChild(checkBtn);
                 }
 
                 li.appendChild(actionDiv);
 
-                // Append to correct section based on state and category
+                // Append destination sorting 
                 if (item.purchased) {
                     purchasedList.appendChild(li);
                 } else {
@@ -495,6 +575,9 @@
                     if (item.category === 'Tea') listTea.appendChild(li);
                 }
             });
+
+            // Refresh Grand Total Display
+            grandTotalDisplay.textContent = `₹${accumulatedTotalSum.toFixed(2)}`;
         });
     </script>
 </body>
